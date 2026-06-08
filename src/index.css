@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+:root {
+  /* Notebook paper & crayon palette */
+  --color-bg-primary: #fdf6e3;
+  --color-bg-secondary: #f5edd4;
+  --color-bg-surface: #fff9ed;
+  --color-bg-surface-hover: #f0e8d0;
+  --color-accent-primary: #e8573a;
+  --color-accent-secondary: #f28c28;
+  --color-accent-tertiary: #3b82c4;
+  --color-accent-danger: #e8573a;
+  --color-accent-warning: #f5c542;
+  --color-accent-green: #5bba6f;
+  --color-text-primary: #3d2c1e;
+  --color-text-secondary: #6b5744;
+  --color-text-muted: #a89478;
+  --color-border: #d4c5a9;
+  --color-border-hover: #bfad8c;
+  --color-node-fill: #e8573a;
+  --color-node-stroke: #f28c28;
+  --color-node-selected: #3b82c4;
+  --color-edge: #9a8568;
+  --color-edge-hover: #e8573a;
+  --color-grid: #c8dae8;
+  --color-grid-strong: #a8c4d8;
+
+  --font-hand: 'Patrick Hand', 'Caveat', cursive;
+  --font-label: 'Caveat', cursive;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Patrick Hand', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+/* Custom scrollbar — notebook themed */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-hover);
+}
+
+/* Tooltip / popup fade in */
+@keyframes tooltipFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Pulse animation for selected nodes */
+@keyframes pulse-ring {
+  0% { opacity: 0.6; r: 28; }
+  100% { opacity: 0; r: 42; }
+}
+
+/* Node entrance animation */
+@keyframes nodeEnter {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Info panel slide */
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* Weight popup number input — remove spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Focus ring for inputs */
+input:focus {
+  outline: none;
+  border-color: var(--color-accent-tertiary) !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 196, 0.2);
+}
+
+/* Adjacency matrix table */
+table {
+  border-spacing: 0;
+}
+
+/* Button focus visible */
+button:focus-visible {
+  outline: 2px solid var(--color-accent-tertiary);
+  outline-offset: 2px;
+}
