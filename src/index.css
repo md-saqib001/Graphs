@@ -116,3 +116,28 @@ button:focus-visible {
   outline: 2px solid var(--color-accent-tertiary);
   outline-offset: 2px;
 }
+
+/* Algorithm node pulse — current node glow */
+@keyframes algoNodePulse {
+  0%, 100% { opacity: 0.4; r: 32; }
+  50% { opacity: 0.8; r: 36; }
+}
+
+/* Algorithm panel slide up */
+@keyframes slideUpPanel {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Shortest Path glowing trail animation */
+@keyframes shortestPathDash {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+.glowing-path {
+  animation: shortestPathDash 0.8s linear infinite;
+  filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.8)) drop-shadow(0 0 10px rgba(59, 130, 246, 0.5));
+}
+

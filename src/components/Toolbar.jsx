@@ -40,6 +40,20 @@ const ICONS = {
       <line x1="5" y1="12" x2="19" y2="12" />
     </svg>
   ),
+  weighted: (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 10V7a3 3 0 0 1 6 0v3" />
+      <rect x="5" y="10" width="14" height="10" rx="3" />
+      <circle cx="12" cy="15" r="1.5" fill="currentColor" />
+    </svg>
+  ),
+  unitWeight: (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 10V7a3 3 0 0 1 6 0v3" strokeDasharray="3 3" />
+      <rect x="5" y="10" width="14" height="10" rx="3" strokeDasharray="3 3" />
+      <text x="12" y="17" textAnchor="middle" fontSize="9" fontWeight="bold" fill="currentColor" fontFamily="monospace">1</text>
+    </svg>
+  ),
   undo: (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="1 4 1 10 7 10" />
@@ -123,10 +137,11 @@ function ToolButton({ id, icon, isActive, color, onClick, title, disabled }) {
 }
 
 export default function Toolbar({
-  mode, onModeChange, directed, onToggleDirected, onClearAll,
+  mode, onModeChange, directed, onToggleDirected, weighted, onToggleWeighted, onClearAll,
   nodeCount, edgeCount,
   canUndo, canRedo, onUndo, onRedo,
   onSave, onLoad, onLoadPreset,
+  algoActive,
 }) {
   const [presetsOpen, setPresetsOpen] = useState(false);
   const fileInputRef = useRef(null);
@@ -156,8 +171,9 @@ export default function Toolbar({
 
   return (
     <div
-      className="fixed left-5 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-3 px-3 py-5 rounded-2xl"
+      className="fixed left-5 z-50 flex flex-col gap-3 px-3 py-4 rounded-2xl"
       style={{
+        top: '68px',
         background: 'var(--color-bg-surface)',
         border: '2px solid var(--color-border)',
         boxShadow: '4px 4px 0px var(--color-border), 0 8px 24px rgba(61,44,30,0.1)',
@@ -165,26 +181,6 @@ export default function Toolbar({
         fontFamily: 'var(--font-hand)',
       }}
     >
-      {/* Logo */}
-      <div className="flex flex-col items-center gap-1.5 pb-2" style={{ borderBottom: '2px dashed var(--color-border)' }}>
-        <div
-          className="w-11 h-11 rounded-xl flex items-center justify-center"
-          style={{ background: 'var(--color-accent-primary)', boxShadow: '2px 2px 0px #c44125' }}
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="6" cy="6" r="3" />
-            <circle cx="18" cy="8" r="3" />
-            <circle cx="10" cy="18" r="3" />
-            <line x1="8.5" y1="7.5" x2="15.5" y2="7" />
-            <line x1="7.5" y1="8.5" x2="9" y2="15.5" />
-            <line x1="12.5" y1="16.5" x2="16" y2="10.5" />
-          </svg>
-        </div>
-        <span className="text-xs font-bold tracking-widest" style={{ color: 'var(--color-text-muted)', fontSize: '0.6rem', fontFamily: 'Inter, sans-serif', textTransform: 'uppercase' }}>
-          Graph
-        </span>
-      </div>
-
       {/* Drawing tools */}
       <div className="flex flex-col gap-1.5">
         {tools.map(tool => (
@@ -196,6 +192,7 @@ export default function Toolbar({
             color={tool.color}
             onClick={() => onModeChange(tool.id)}
             title={`${tool.label} (${tool.shortcut})`}
+            disabled={algoActive}
           />
         ))}
       </div>
@@ -209,6 +206,15 @@ export default function Toolbar({
         isActive={false}
         onClick={onToggleDirected}
         title={directed ? 'Directed (toggle)' : 'Undirected (toggle)'}
+      />
+
+      {/* Weighted toggle */}
+      <ToolButton
+        id="toggle-weighted"
+        icon={weighted ? ICONS.weighted : ICONS.unitWeight}
+        isActive={false}
+        onClick={onToggleWeighted}
+        title={weighted ? 'Weighted Graph (toggle)' : 'Unit-weight Graph (toggle)'}
       />
 
       {/* Clear */}
@@ -254,12 +260,14 @@ export default function Toolbar({
           {/* Preset flyout */}
           {presetsOpen && (
             <div
-              className="absolute left-full top-0 ml-3 py-2 rounded-xl"
+              className="absolute left-full bottom-0 ml-3 py-2 rounded-xl"
               style={{
                 background: 'var(--color-bg-surface)',
                 border: '2px solid var(--color-border)',
                 boxShadow: '4px 4px 0px var(--color-border)',
-                minWidth: '180px',
+                minWidth: '220px',
+                maxHeight: '380px',
+                overflowY: 'auto',
                 animation: 'tooltipFadeIn 0.15s ease-out',
                 fontFamily: 'var(--font-hand)',
                 zIndex: 100,
@@ -284,12 +292,7 @@ export default function Toolbar({
                   }}
                 >
                   <span style={{ fontSize: '0.85rem' }}>
-                    {key === 'empty' && '⬜'}
-                    {key === 'path' && '➖'}
-                    {key === 'cycle' && '🔄'}
-                    {key === 'complete' && '🌐'}
-                    {key === 'tree' && '🌳'}
-                    {key === 'negative' && '➖'}
+                    {preset.icon || '➖'}
                   </span>
                   {preset.name}
                 </button>

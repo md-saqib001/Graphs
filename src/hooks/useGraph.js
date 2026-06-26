@@ -10,22 +10,24 @@ function layoutCircle(count, cx = 500, cy = 350, r = 180) {
 }
 
 export const PRESETS = {
-  empty: { name: 'Empty Graph', build: () => ({ nodes: [], edges: [], directed: true, nextId: 1 }) },
+  empty: { name: 'Empty Graph', icon: '⬜', build: () => ({ nodes: [], edges: [], directed: true, weighted: true, nextId: 1 }) },
 
   path: {
     name: 'Path P₅',
+    icon: '➖',
     build: () => {
       const nodes = Array.from({ length: 5 }, (_, i) => ({
         id: i + 1, x: 200 + i * 140, y: 350, label: `${i + 1}`,
       }));
       const edges = [];
       for (let i = 1; i < 5; i++) edges.push({ id: `${i}-${i + 1}`, from: i, to: i + 1, weight: 1 });
-      return { nodes, edges, directed: false, nextId: 6 };
+      return { nodes, edges, directed: false, weighted: false, nextId: 6 };
     },
   },
 
   cycle: {
     name: 'Cycle C₅',
+    icon: '🔄',
     build: () => {
       const nodes = layoutCircle(5);
       const edges = [];
@@ -33,24 +35,26 @@ export const PRESETS = {
         const next = i === 5 ? 1 : i + 1;
         edges.push({ id: `${i}-${next}`, from: i, to: next, weight: 1 });
       }
-      return { nodes, edges, directed: false, nextId: 6 };
+      return { nodes, edges, directed: false, weighted: false, nextId: 6 };
     },
   },
 
   complete: {
     name: 'Complete K₅',
+    icon: '🌐',
     build: () => {
       const nodes = layoutCircle(5);
       const edges = [];
       for (let i = 1; i <= 5; i++)
         for (let j = i + 1; j <= 5; j++)
           edges.push({ id: `${i}-${j}`, from: i, to: j, weight: 1 });
-      return { nodes, edges, directed: false, nextId: 6 };
+      return { nodes, edges, directed: false, weighted: false, nextId: 6 };
     },
   },
 
   tree: {
     name: 'Binary Tree',
+    icon: '🌳',
     build: () => ({
       nodes: [
         { id: 1, x: 500, y: 180, label: '1' },
@@ -70,12 +74,14 @@ export const PRESETS = {
         { id: '3-7', from: 3, to: 7, weight: 7 },
       ],
       directed: false,
+      weighted: true,
       nextId: 8,
     }),
   },
 
   negative: {
     name: 'Negative Edges',
+    icon: '➖',
     build: () => ({
       nodes: [
         { id: 1, x: 350, y: 220, label: '1' },
@@ -92,7 +98,243 @@ export const PRESETS = {
         { id: '2-4', from: 2, to: 4, weight: -1 },
       ],
       directed: true,
+      weighted: true,
       nextId: 5,
+    }),
+  },
+
+  dijkstra_trap: {
+    name: 'Dijkstra Greedy Trap',
+    icon: '⚖️',
+    build: () => ({
+      nodes: [
+        { id: 1, x: 220, y: 350, label: '1' },
+        { id: 2, x: 450, y: 220, label: '2' },
+        { id: 3, x: 450, y: 480, label: '3' },
+        { id: 4, x: 680, y: 350, label: '4' },
+        { id: 5, x: 450, y: 350, label: '5' },
+      ],
+      edges: [
+        { id: '1-2', from: 1, to: 2, weight: 2 },
+        { id: '2-4', from: 2, to: 4, weight: 5 },
+        { id: '1-3', from: 1, to: 3, weight: 6 },
+        { id: '3-4', from: 3, to: 4, weight: 1 },
+        { id: '1-5', from: 1, to: 5, weight: 1 },
+        { id: '5-3', from: 5, to: 3, weight: 2 },
+      ],
+      directed: true,
+      weighted: true,
+      nextId: 6,
+    }),
+  },
+
+  bellman_cycle: {
+    name: 'Bellman-Ford Cycle',
+    icon: '🔄',
+    build: () => ({
+      nodes: [
+        { id: 1, x: 180, y: 350, label: '1' },
+        { id: 2, x: 400, y: 230, label: '2' },
+        { id: 3, x: 620, y: 230, label: '3' },
+        { id: 4, x: 620, y: 470, label: '4' },
+        { id: 5, x: 400, y: 470, label: '5' },
+      ],
+      edges: [
+        { id: '1-2', from: 1, to: 2, weight: 3 },
+        { id: '2-3', from: 2, to: 3, weight: 2 },
+        { id: '3-4', from: 3, to: 4, weight: -1 },
+        { id: '4-5', from: 4, to: 5, weight: -2 },
+        { id: '5-2', from: 5, to: 2, weight: -1 },
+        { id: '4-1', from: 4, to: 1, weight: 4 },
+      ],
+      directed: true,
+      weighted: true,
+      nextId: 6,
+    }),
+  },
+
+  floyd_warshall: {
+    name: 'Floyd-Warshall 5-Node',
+    icon: '🧮',
+    build: () => ({
+      nodes: [
+        { id: 1, x: 280, y: 230, label: '1' },
+        { id: 2, x: 520, y: 230, label: '2' },
+        { id: 3, x: 280, y: 470, label: '3' },
+        { id: 4, x: 520, y: 470, label: '4' },
+        { id: 5, x: 720, y: 350, label: '5' },
+      ],
+      edges: [
+        { id: '1-2', from: 1, to: 2, weight: 3 },
+        { id: '2-3', from: 2, to: 3, weight: 8 },
+        { id: '3-1', from: 3, to: 1, weight: -4 },
+        { id: '1-4', from: 1, to: 4, weight: 2 },
+        { id: '4-3', from: 4, to: 3, weight: 5 },
+        { id: '2-4', from: 2, to: 4, weight: 1 },
+        { id: '4-5', from: 4, to: 5, weight: 4 },
+        { id: '5-2', from: 5, to: 2, weight: 2 },
+      ],
+      directed: true,
+      weighted: true,
+      nextId: 6,
+    }),
+  },
+
+  mst_forest: {
+    name: 'MST Spanning Forest',
+    icon: '🌲',
+    build: () => ({
+      nodes: [
+        { id: 1, x: 200, y: 250, label: '1' },
+        { id: 2, x: 400, y: 250, label: '2' },
+        { id: 3, x: 400, y: 450, label: '3' },
+        { id: 4, x: 200, y: 450, label: '4' },
+        { id: 5, x: 680, y: 250, label: '5' },
+        { id: 6, x: 680, y: 450, label: '6' },
+      ],
+      edges: [
+        { id: '1-2', from: 1, to: 2, weight: 4 },
+        { id: '2-3', from: 2, to: 3, weight: 3 },
+        { id: '3-4', from: 3, to: 4, weight: 2 },
+        { id: '4-1', from: 4, to: 1, weight: 5 },
+        { id: '1-3', from: 1, to: 3, weight: 6 },
+        { id: '5-6', from: 5, to: 6, weight: 3 },
+      ],
+      directed: false,
+      weighted: true,
+      nextId: 7,
+    }),
+  },
+
+  topo_dag: {
+    name: 'Topological Sort DAG',
+    icon: '🔢',
+    build: () => ({
+      nodes: [
+        { id: 1, x: 180, y: 250, label: '1' },
+        { id: 2, x: 180, y: 450, label: '2' },
+        { id: 3, x: 430, y: 250, label: '3' },
+        { id: 4, x: 430, y: 450, label: '4' },
+        { id: 5, x: 680, y: 250, label: '5' },
+        { id: 6, x: 680, y: 450, label: '6' },
+      ],
+      edges: [
+        { id: '1-3', from: 1, to: 3, weight: 1 },
+        { id: '1-4', from: 1, to: 4, weight: 1 },
+        { id: '2-4', from: 2, to: 4, weight: 1 },
+        { id: '3-5', from: 3, to: 5, weight: 1 },
+        { id: '4-5', from: 4, to: 5, weight: 1 },
+        { id: '4-6', from: 4, to: 6, weight: 1 },
+        { id: '5-6', from: 5, to: 6, weight: 1 },
+      ],
+      directed: true,
+      weighted: false,
+      nextId: 7,
+    }),
+  },
+
+  kosaraju_scc: {
+    name: 'Kosaraju SCC Graph',
+    icon: '🎨',
+    build: () => ({
+      nodes: [
+        { id: 1, x: 200, y: 250, label: '1' },
+        { id: 2, x: 400, y: 250, label: '2' },
+        { id: 3, x: 300, y: 420, label: '3' },
+        { id: 4, x: 600, y: 250, label: '4' },
+        { id: 5, x: 780, y: 250, label: '5' },
+        { id: 6, x: 690, y: 420, label: '6' },
+      ],
+      edges: [
+        { id: '1-2', from: 1, to: 2, weight: 1 },
+        { id: '2-3', from: 2, to: 3, weight: 1 },
+        { id: '3-1', from: 3, to: 1, weight: 1 },
+        { id: '2-4', from: 2, to: 4, weight: 1 },
+        { id: '4-5', from: 4, to: 5, weight: 1 },
+        { id: '5-6', from: 5, to: 6, weight: 1 },
+        { id: '6-4', from: 6, to: 4, weight: 1 },
+      ],
+      directed: true,
+      weighted: false,
+      nextId: 7,
+    }),
+  },
+
+  bipartite_grid: {
+    name: 'Bipartite Grid',
+    icon: '🔴',
+    build: () => ({
+      nodes: [
+        { id: 1, x: 220, y: 250, label: '1' },
+        { id: 2, x: 450, y: 250, label: '2' },
+        { id: 3, x: 680, y: 250, label: '3' },
+        { id: 4, x: 220, y: 450, label: '4' },
+        { id: 5, x: 450, y: 450, label: '5' },
+        { id: 6, x: 680, y: 450, label: '6' },
+      ],
+      edges: [
+        { id: '1-2', from: 1, to: 2, weight: 1 },
+        { id: '2-3', from: 2, to: 3, weight: 1 },
+        { id: '4-5', from: 4, to: 5, weight: 1 },
+        { id: '5-6', from: 5, to: 6, weight: 1 },
+        { id: '1-4', from: 1, to: 4, weight: 1 },
+        { id: '2-5', from: 2, to: 5, weight: 1 },
+        { id: '3-6', from: 3, to: 6, weight: 1 },
+      ],
+      directed: false,
+      weighted: false,
+      nextId: 7,
+    }),
+  },
+
+  non_bipartite: {
+    name: 'Non-Bipartite Cycle',
+    icon: '🔵',
+    build: () => ({
+      nodes: [
+        { id: 1, x: 450, y: 200, label: '1' },
+        { id: 2, x: 650, y: 320, label: '2' },
+        { id: 3, x: 570, y: 520, label: '3' },
+        { id: 4, x: 330, y: 520, label: '4' },
+        { id: 5, x: 250, y: 320, label: '5' },
+      ],
+      edges: [
+        { id: '1-2', from: 1, to: 2, weight: 1 },
+        { id: '2-3', from: 2, to: 3, weight: 1 },
+        { id: '3-4', from: 3, to: 4, weight: 1 },
+        { id: '4-5', from: 4, to: 5, weight: 1 },
+        { id: '5-1', from: 5, to: 1, weight: 1 },
+      ],
+      directed: false,
+      weighted: false,
+      nextId: 6,
+    }),
+  },
+
+  tarjan_dumbbell: {
+    name: 'Tarjan Dumbbell',
+    icon: '🌉',
+    build: () => ({
+      nodes: [
+        { id: 1, x: 250, y: 250, label: '1' },
+        { id: 2, x: 150, y: 420, label: '2' },
+        { id: 3, x: 350, y: 420, label: '3' },
+        { id: 4, x: 650, y: 250, label: '4' },
+        { id: 5, x: 550, y: 420, label: '5' },
+        { id: 6, x: 750, y: 420, label: '6' },
+      ],
+      edges: [
+        { id: '1-2', from: 1, to: 2, weight: 1 },
+        { id: '2-3', from: 2, to: 3, weight: 1 },
+        { id: '3-1', from: 3, to: 1, weight: 1 },
+        { id: '3-5', from: 3, to: 5, weight: 1 },
+        { id: '4-5', from: 4, to: 5, weight: 1 },
+        { id: '5-6', from: 5, to: 6, weight: 1 },
+        { id: '6-4', from: 6, to: 4, weight: 1 },
+      ],
+      directed: false,
+      weighted: false,
+      nextId: 7,
     }),
   },
 };
@@ -104,11 +346,12 @@ function cloneState(s) {
     nodes: s.nodes.map(n => ({ ...n })),
     edges: s.edges.map(e => ({ ...e })),
     directed: s.directed,
+    weighted: s.weighted,
     nextId: s.nextId,
   };
 }
 
-const INITIAL_STATE = { nodes: [], edges: [], directed: true, nextId: 1 };
+const INITIAL_STATE = { nodes: [], edges: [], directed: true, weighted: true, nextId: 1 };
 const MAX_HISTORY = 50;
 
 // ── Reducer ───────────────────────────────────────────────────────────
@@ -198,8 +441,23 @@ function graphReducer(state, action) {
       });
     }
 
+    case 'TOGGLE_WEIGHTED': {
+      return commit({
+        ...present,
+        weighted: !present.weighted,
+      });
+    }
+
+    case 'UPDATE_EDGE_WEIGHT': {
+      const { edgeId, weight } = action;
+      return commit({
+        ...present,
+        edges: present.edges.map(e => e.id === edgeId ? { ...e, weight } : e),
+      });
+    }
+
     case 'CLEAR_ALL': {
-      return commit({ nodes: [], edges: [], directed: present.directed, nextId: 1 });
+      return commit({ nodes: [], edges: [], directed: present.directed, weighted: present.weighted, nextId: 1 });
     }
 
     case 'LOAD_GRAPH': {
@@ -207,6 +465,7 @@ function graphReducer(state, action) {
         nodes: action.data.nodes || [],
         edges: action.data.edges || [],
         directed: action.data.directed ?? true,
+        weighted: action.data.weighted ?? true,
         nextId: action.data.nextId ?? (Math.max(0, ...(action.data.nodes || []).map(n => n.id)) + 1),
       });
     }
@@ -219,6 +478,7 @@ function graphReducer(state, action) {
         nodes: data.nodes,
         edges: data.edges,
         directed: data.directed,
+        weighted: data.weighted ?? true,
         nextId: data.nextId,
       });
     }
@@ -292,6 +552,8 @@ export function useGraph() {
   const clearAll = useCallback(() => dispatch({ type: 'CLEAR_ALL' }), []);
 
   const toggleDirected = useCallback(() => dispatch({ type: 'TOGGLE_DIRECTED' }), []);
+  const toggleWeighted = useCallback(() => dispatch({ type: 'TOGGLE_WEIGHTED' }), []);
+  const updateEdgeWeight = useCallback((edgeId, weight) => dispatch({ type: 'UPDATE_EDGE_WEIGHT', edgeId, weight }), []);
 
   const undo = useCallback(() => dispatch({ type: 'UNDO' }), []);
   const redo = useCallback(() => dispatch({ type: 'REDO' }), []);
@@ -305,6 +567,7 @@ export function useGraph() {
       nodes: present.nodes,
       edges: present.edges,
       directed: present.directed,
+      weighted: present.weighted,
       nextId: present.nextId,
     }, null, 2);
   }, [present]);
@@ -313,6 +576,7 @@ export function useGraph() {
     nodes: present.nodes,
     edges: present.edges,
     directed: present.directed,
+    weighted: present.weighted ?? true,
     addNode,
     removeNode,
     updateNodePosition,
@@ -322,6 +586,8 @@ export function useGraph() {
     removeEdge,
     clearAll,
     toggleDirected,
+    toggleWeighted,
+    updateEdgeWeight,
     undo,
     redo,
     canUndo: past.length > 0,

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 
-export default function WeightPopup({ x, y, onConfirm, onCancel }) {
-  const [value, setValue] = useState('1');
+export default function WeightPopup({ x, y, initialValue = 1, onConfirm, onCancel }) {
+  const [value, setValue] = useState(String(initialValue));
   const inputRef = useRef(null);
 
   useEffect(() => {
