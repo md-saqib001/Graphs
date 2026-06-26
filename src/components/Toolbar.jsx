@@ -88,6 +88,12 @@ const ICONS = {
       <rect x="14" y="14" width="7" height="7" rx="1" />
     </svg>
   ),
+  degrees: (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3" fill="currentColor" />
+      <path d="M12 3v3M12 18v3M3 12h3M18 12h3" />
+    </svg>
+  ),
 };
 
 const TOOL_COLORS = {
@@ -142,6 +148,7 @@ export default function Toolbar({
   canUndo, canRedo, onUndo, onRedo,
   onSave, onLoad, onLoadPreset,
   algoActive,
+  showDegrees, onToggleDegrees,
 }) {
   const [presetsOpen, setPresetsOpen] = useState(false);
   const fileInputRef = useRef(null);
@@ -215,6 +222,15 @@ export default function Toolbar({
         isActive={false}
         onClick={onToggleWeighted}
         title={weighted ? 'Weighted Graph (toggle)' : 'Unit-weight Graph (toggle)'}
+      />
+
+      {/* Degrees toggle */}
+      <ToolButton
+        id="toggle-degrees"
+        icon={ICONS.degrees}
+        isActive={showDegrees}
+        onClick={onToggleDegrees}
+        title={showDegrees ? 'Hide Node Degrees' : 'Show Node Degrees'}
       />
 
       {/* Clear */}

@@ -183,7 +183,8 @@ function EdgeLine({
 
 function NodeCircle({
   node, isSelected, isHovered, onMouseDown, onMouseEnter, onMouseLeave,
-  onClick, onContextMenu, algoState, isCurrent, isDestination, isSource
+  onClick, onContextMenu, algoState, isCurrent, isDestination, isSource,
+  showDegrees, degreeCount, inDegreeCount, outDegreeCount, directed
 }) {
   const isHighlighted = isSelected || isHovered;
 
@@ -387,6 +388,25 @@ function NodeCircle({
           </text>
         </g>
       )}
+
+      {/* Degree indicator text */}
+      {showDegrees && (
+        <text
+          x={node.x}
+          y={node.y + ((isSource || isDestination) ? -48 : -32)}
+          textAnchor="middle"
+          fontSize="13"
+          fontWeight="700"
+          fill="var(--color-text-secondary)"
+          fontFamily="'Patrick Hand', cursive"
+          stroke="var(--color-bg-primary)"
+          strokeWidth="3"
+          paintOrder="stroke"
+          style={{ pointerEvents: 'none', userSelect: 'none' }}
+        >
+          {directed ? `i:${inDegreeCount} , o:${outDegreeCount}` : degreeCount}
+        </text>
+      )}
     </g>
   );
 }
@@ -411,6 +431,7 @@ export default function GraphCanvas({
   isAlgoSp,
   isComplete,
   onNodeClickDest,
+  showDegrees,
 }) {
   const svgRef = useRef(null);
   const [dragging, setDragging] = useState(null);
@@ -673,23 +694,48 @@ export default function GraphCanvas({
       )}
 
       {/* Nodes */}
-      {nodes.map(node => (
-        <NodeCircle
-          key={node.id}
-          node={node}
-          isSelected={selectedNode === node.id || edgeStartNode === node.id}
-          isHovered={hoveredNode === node.id}
-          onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
-          onMouseEnter={() => setHoveredNode(node.id)}
-          onMouseLeave={() => setHoveredNode(null)}
-          onClick={(e) => handleNodeClick(e, node.id)}
-          onContextMenu={(e) => handleContextMenu(e, 'node', node.id)}
-          algoState={nodeColors?.[node.id] || null}
-          isCurrent={currentNode === node.id}
-          isDestination={destinationNode === node.id}
-          isSource={sourceNode === node.id}
-        />
-      ))}
+      {(() => {
+        // Compute degrees for display if showDegrees is enabled
+        const degs = {};
+        const inDegs = {};
+        const outDegs = {};
+
+        nodes.forEach(n => {
+          degs[n.id] = 0;
+          inDegs[n.id] = 0;
+          outDegs[n.id] = 0;
+        });
+
+        edges.forEach(e => {
+          if (outDegs[e.from] !== undefined) outDegs[e.from]++;
+          if (inDegs[e.to] !== undefined) inDegs[e.to]++;
+          if (degs[e.from] !== undefined) degs[e.from]++;
+          if (degs[e.to] !== undefined) degs[e.to]++;
+        });
+
+        return nodes.map(node => (
+          <NodeCircle
+            key={node.id}
+            node={node}
+            isSelected={selectedNode === node.id || edgeStartNode === node.id}
+            isHovered={hoveredNode === node.id}
+            onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
+            onMouseEnter={() => setHoveredNode(node.id)}
+            onMouseLeave={() => setHoveredNode(null)}
+            onClick={(e) => handleNodeClick(e, node.id)}
+            onContextMenu={(e) => handleContextMenu(e, 'node', node.id)}
+            algoState={nodeColors?.[node.id] || null}
+            isCurrent={currentNode === node.id}
+            isDestination={destinationNode === node.id}
+            isSource={sourceNode === node.id}
+            showDegrees={showDegrees}
+            degreeCount={degs[node.id] || 0}
+            inDegreeCount={inDegs[node.id] || 0}
+            outDegreeCount={outDegs[node.id] || 0}
+            directed={directed}
+          />
+        ));
+      })()}
 
       {/* Context Menu */}
       {contextMenu && (

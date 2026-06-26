@@ -14,6 +14,7 @@ export default function App() {
   const algo = useAlgorithm();
   const [mode, setMode] = useState('addNode');
   const [toast, setToast] = useState(null);
+  const [showDegrees, setShowDegrees] = useState(false);
 
   // Weight popup state
   const [weightPopup, setWeightPopup] = useState(null);
@@ -409,6 +410,8 @@ export default function App() {
         onLoad={handleLoad}
         onLoadPreset={handleLoadPreset}
         algoActive={algo.isActive}
+        showDegrees={showDegrees}
+        onToggleDegrees={() => setShowDegrees(!showDegrees)}
       />
 
       {/* Canvas — full screen, panels float over it */}
@@ -446,6 +449,7 @@ export default function App() {
           }
           isComplete={algo.isComplete}
           onNodeClickDest={algo.setDestinationNode}
+          showDegrees={showDegrees}
         />
       </div>
 
